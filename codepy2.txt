@@ -28,49 +28,33 @@ def findEncodings(images):
     return encodeList
  
 def markAttendance(name):
-    with open('attendance.csv','r+') as f:
-        myDataList = f.readlines()
-        nameList = []
-        for line in myDataList:
-            entry = line.split(',')
-            nameList.append(entry[0])
-        if name not in nameList:
-            now = datetime.now()
-            namecomplet = name.split(",")
-            firstname = namecomplet[0]
-            lastname = namecomplet[1]
-            id_time = int(time.time())
-           # dtString = now.strftime('%H:%M:%S')
-            #f.writelines(f'\n{name},{dtString}')
-            try:
-                # Connect to the database
-                connection = pymysql.connect(host='localhost',
+    now = datetime.now()
+    namecomplet = name.split(",")
+    firstname = namecomplet[0]
+    lastname = namecomplet[1]
+           
+    try:
+        
+        connection = pymysql.connect(host='localhost',
                                          user='root',
                                          password='',
-                                         db='facial_db')
-            ## Step3
-                cursor=connection.cursor()
-                # Create a new record
-                sql = "INSERT INTO `present` (`id`,`lastname`,`firstname`, `date`) VALUES (%s,%s, %s, %s)"
-                cursor.execute(sql, (id_time,lastname,firstname,now))
-                # connection is not autocommit by default. So we must commit to save our changes.
-                connection.commit()
-            ## Step 4
-                # Execute query
-                sql = "SELECT * FROM `present`"
-                cursor.execute(sql)
-                # Fetch all the records
-                result = cursor.fetchall()
-                for i in result:
-                    print(i)
-                time.sleep(1)
-            #except Error as e:
-              
-            ## Step 5
-            finally:
-                # close the database connection using close() method.
-               # connection.close()
-               pass
+                                         db='attendance')
+        cursor=connection.cursor()
+        sql = "INSERT INTO `etudiant` (`nom`,`prenom`, `heure`) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (lastname,firstname,now))
+        connection.commit()
+            
+        sql = "SELECT * FROM `etudiant`"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for i in result:
+            
+            print(i)
+            time.sleep(1)
+        
+    finally:
+               
+            pass
  
 #### FOR CAPTURING SCREEN RATHER THAN WEBCAM
 # def captureScreen(bbox=(300,300,690+300,530+300)):
